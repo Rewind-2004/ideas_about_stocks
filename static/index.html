@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIGNAL.AI MVP</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>SIGNAL.AI — A股 + 美股 日频预测面板</h1>
+      <p id="meta"></p>
+    </header>
+
+    <section class="toolbar">
+      <label>市场过滤:</label>
+      <select id="marketFilter">
+        <option value="">全部</option>
+        <option value="CN">A股</option>
+        <option value="US">美股</option>
+      </select>
+
+      <label>自选股:</label>
+      <input id="watchSymbol" placeholder="输入代码，例如 600519 / NVDA" />
+      <button id="addWatchBtn">加入自选</button>
+      <span id="watchlistText"></span>
+    </section>
+
+    <main>
+      <aside>
+        <h2>推荐列表</h2>
+        <ul id="signalList"></ul>
+      </aside>
+
+      <article>
+        <h2 id="detailTitle">点击左侧查看详情</h2>
+        <div id="badges"></div>
+        <div class="card-grid">
+          <div class="card">
+            <h3>评分</h3>
+            <pre id="scores"></pre>
+          </div>
+          <div class="card">
+            <h3>建议区间</h3>
+            <pre id="zones"></pre>
+          </div>
+          <div class="card">
+            <h3>理由</h3>
+            <ul id="reasons"></ul>
+          </div>
+          <div class="card">
+            <h3>风险</h3>
+            <ul id="risks"></ul>
+          </div>
+          <div class="card full">
+            <h3>预测 K 线（当日）</h3>
+            <pre id="kline"></pre>
+          </div>
+        </div>
+      </article>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
