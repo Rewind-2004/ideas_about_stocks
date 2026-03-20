@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 from datetime import date
+from hashlib import blake2b
 from random import Random
 from typing import Dict, List
 
@@ -53,7 +54,25 @@ class SignalEngine:
 
     @staticmethod
     def _seed_for(today: date, symbol: str) -> int:
-        return hash(f"{today.isoformat()}::{symbol}") & 0xFFFFFFFF
+        digest = blake2b(f"{today.isoformat()}::{symbol}".encode("utf-8"), digest_size=8).digest()
+        return int.from_bytes(digest, byteorder="big", signed=False)
+
+    @staticmethod
+    def _build_candle(rnd: Random, base: float) -> Dict[str, float]:
+        open_price = round(base * rnd.uniform(0.99, 1.01), 2)
+        close_price = round(base * rnd.uniform(0.985, 1.03), 2)
+
+        max_body = max(open_price, close_price)
+        min_body = min(open_price, close_price)
+        high = round(max_body * rnd.uniform(1.0, 1.03), 2)
+        low = round(min_body * rnd.uniform(0.97, 1.0), 2)
+
+        return {
+            "open": open_price,
+            "high": max(high, open_price, close_price),
+            "low": min(low, open_price, close_price),
+            "close": close_price,
+        }
 
     def generate_daily_signals(self, market: str | None = None) -> List[StockSignal]:
         today = date.today()
@@ -61,6 +80,7 @@ class SignalEngine:
         for symbol, name, mkt, sector in UNIVERSE:
             if market and mkt != market:
                 continue
+
             rnd = Random(self._seed_for(today, symbol))
             tech = round(rnd.uniform(40, 92), 2)
             llm = round(rnd.uniform(35, 95), 2)
@@ -68,16 +88,12 @@ class SignalEngine:
             macro = round(rnd.uniform(30, 85), 2)
             score = round(0.35 * tech + 0.30 * llm + 0.25 * context + 0.10 * macro, 2)
             direction = "bull" if score >= 62 else "bear" if score <= 45 else "neutral"
+
             base = round(rnd.uniform(20, 280), 2)
             atr = round(base * rnd.uniform(0.015, 0.04), 2)
             entry_low = round(base * 0.985, 2)
-            entry_high = round(base * 1.0, 2)
-            candle = {
-                "open": round(base * rnd.uniform(0.99, 1.01), 2),
-                "high": round(base * rnd.uniform(1.01, 1.04), 2),
-                "low": round(base * rnd.uniform(0.96, 0.99), 2),
-                "close": round(base * rnd.uniform(0.985, 1.03), 2),
-            }
+            entry_high = round(base, 2)
+
             rows.append(
                 StockSignal(
                     symbol=symbol,
@@ -101,7 +117,7 @@ class SignalEngine:
                     entry_zone={"low": entry_low, "high": entry_high},
                     stop_loss=round(entry_low - 1.5 * atr, 2),
                     take_profit=round(entry_high + 2.5 * atr, 2),
-                    predicted_kline=candle,
+                    predicted_kline=self._build_candle(rnd, base),
                 )
             )
 
