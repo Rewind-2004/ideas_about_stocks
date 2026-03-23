@@ -1,65 +1,84 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SIGNAL.AI MVP</title>
-    <link rel="stylesheet" href="/static/styles.css" />
-  </head>
-  <body>
-    <header>
-      <h1>SIGNAL.AI — A股 + 美股 日频预测面板</h1>
-      <p id="meta"></p>
-    </header>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>SIGNAL.AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css"/>
+</head>
+<body>
 
-    <section class="toolbar">
-      <label>市场过滤:</label>
-      <select id="marketFilter">
-        <option value="">全部</option>
-        <option value="CN">A股</option>
-        <option value="US">美股</option>
-      </select>
+  <!-- ── Topbar ── -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-name">SIGNAL<span class="accent">.</span>AI</span>
+      <span class="brand-sub">STOCK INTELLIGENCE</span>
+    </div>
+    <div class="topbar-center">
+      <div class="live-badge"><span class="live-dot"></span>LIVE</div>
+      <span id="clockLabel" class="clock"></span>
+    </div>
+    <div class="topbar-right">
+      <span id="summaryBull" class="summary bull">▲ — 看涨</span>
+      <span id="summaryBear" class="summary bear">▼ — 看跌</span>
+      <button id="sidebarToggle" class="sidebar-btn">★ 自选股</button>
+    </div>
+  </header>
 
-      <label>自选股:</label>
-      <input id="watchSymbol" placeholder="输入代码，例如 600519 / NVDA" />
-      <button id="addWatchBtn">加入自选</button>
-      <span id="watchlistText"></span>
-    </section>
+  <!-- ── Layout ── -->
+  <div class="layout">
 
-    <main>
-      <aside>
-        <h2>推荐列表</h2>
-        <ul id="signalList"></ul>
-      </aside>
-
-      <article>
-        <h2 id="detailTitle">点击左侧查看详情</h2>
-        <div id="badges"></div>
-        <div class="card-grid">
-          <div class="card">
-            <h3>评分</h3>
-            <pre id="scores"></pre>
-          </div>
-          <div class="card">
-            <h3>建议区间</h3>
-            <pre id="zones"></pre>
-          </div>
-          <div class="card">
-            <h3>理由</h3>
-            <ul id="reasons"></ul>
-          </div>
-          <div class="card">
-            <h3>风险</h3>
-            <ul id="risks"></ul>
-          </div>
-          <div class="card full">
-            <h3>预测 K 线（当日）</h3>
-            <pre id="kline"></pre>
-          </div>
+    <!-- Main -->
+    <div class="main-panel">
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="bull">▲ 看涨</button>
+        <button class="filter-btn" data-filter="bear">▼ 看跌</button>
+        <button class="filter-btn" data-filter="watch">★ 自选</button>
+        <div class="market-group">
+          <button class="market-btn active" data-market="">全市场</button>
+          <button class="market-btn" data-market="CN">A股</button>
+          <button class="market-btn" data-market="US">美股</button>
         </div>
-      </article>
-    </main>
+      </div>
+      <div class="card-grid" id="cardGrid">
+        <div class="loading-msg">正在加载今日预测数据…</div>
+      </div>
+    </div>
 
-    <script src="/static/app.js"></script>
-  </body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-inner">
+        <div class="sidebar-head">
+          <span class="sidebar-title">自选股</span>
+          <span class="sidebar-sub">输入代码加入关注</span>
+        </div>
+        <div class="watch-row">
+          <input id="watchInput" placeholder="600519 / NVDA" maxlength="12" autocomplete="off"/>
+          <button id="watchAdd">+</button>
+        </div>
+        <div id="watchMsg" class="watch-msg"></div>
+        <div id="watchItems" class="watch-items"></div>
+        <div class="sidebar-foot">
+          <div class="foot-label">// 支持的市场</div>
+          <div class="foot-item"><span style="color:var(--bull)">A股</span> — 6位数字</div>
+          <div class="foot-item"><span style="color:var(--blue)">美股</span> — Ticker</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Modal ── -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
 </html>
