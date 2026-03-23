@@ -6,16 +6,36 @@
 
 ## 快速开始（现在可运行）
 
+### Windows（推荐）
+双击 `start.bat`，或在命令行执行：
+
+```bat
+start.bat
+```
+
+### macOS / Linux
+
+```bash
+./start.sh
+```
+
+### 手动启动（通用）
+
 ```bash
 python -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate  # Windows请改为 .venv\Scripts\activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+python run_local.py
 ```
 
 启动后访问：
 - Web 面板：`http://127.0.0.1:8000/`
 - API 文档：`http://127.0.0.1:8000/docs`
+
+常见启动问题排查：
+- 如果提示 `No module named fastapi/uvicorn`：说明依赖未安装，重新运行 `start.bat` 或 `pip install -r requirements.txt`。
+- 如果提示端口被占用：关闭占用 8000 端口的进程，或改 `run_local.py` 中端口。
+- 如果你在公司网络下安装依赖失败：先配置 pip 代理或镜像源后再执行。
 
 当前已实现 MVP 页面能力：
 - 展示 A股/美股每日预测列表（看涨/看跌/中性）
